@@ -1,0 +1,189 @@
+// Prisma schema for SchoolPay Uganda
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  PARENT
+  SCHOOL_ADMIN
+  SUPER_ADMIN
+}
+
+enum SchoolStatus {
+  PENDING
+  APPROVED
+  SUSPENDED
+}
+
+enum PaymentMethod {
+  MOBILE_MONEY
+  BANK
+  CARD
+  CASH
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  ISSUED
+  PARTIAL
+  PAID
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  phone        String
+  passwordHash String
+  role         Role
+  schoolAdmin  SchoolAdmin?
+  parentLinks  ParentStudent[]
+  payments     Payment[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model School {
+  id          String   @id @default(cuid())
+  name        String
+  code        String   @unique
+  district    String
+  address     String
+  contact     String?
+  logo        String?
+  status      SchoolStatus @default(PENDING)
+  admins      SchoolAdmin[]
+  classes     Class[]
+  terms       Term[]
+  students    Student[]
+  payments    Payment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model SchoolAdmin {
+  id       String @id @default(cuid())
+  userId   String @unique
+  schoolId String
+  user     User   @relation(fields: [userId], references: [id])
+  school   School @relation(fields: [schoolId], references: [id])
+}
+
+model Class {
+  id         String   @id @default(cuid())
+  name       String
+  levelOrder Int
+  schoolId   String
+  school     School   @relation(fields: [schoolId], references: [id])
+  students   Student[]
+  feeItems   FeeItemTemplate[]
+}
+
+model Term {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  dueDate   DateTime
+  schoolId  String
+  school    School   @relation(fields: [schoolId], references: [id])
+  invoices  Invoice[]
+  feeItems  FeeItemTemplate[]
+}
+
+model Student {
+  id          String   @id @default(cuid())
+  studentCode String   @unique
+  fullName    String
+  classId     String
+  stream      String?
+  status      String   @default("ACTIVE")
+  schoolId    String
+  school      School   @relation(fields: [schoolId], references: [id])
+  class       Class    @relation(fields: [classId], references: [id])
+  parents     ParentStudent[]
+  invoices    Invoice[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ParentStudent {
+  id        String @id @default(cuid())
+  parentId  String
+  studentId String
+  relationship String
+  parent    User    @relation(fields: [parentId], references: [id])
+  student   Student @relation(fields: [studentId], references: [id])
+}
+
+model FeeItemTemplate {
+  id       String  @id @default(cuid())
+  classId  String
+  termId   String
+  itemName String
+  amount   Int
+  class    Class   @relation(fields: [classId], references: [id])
+  term     Term    @relation(fields: [termId], references: [id])
+}
+
+model Invoice {
+  id          String   @id @default(cuid())
+  studentId   String
+  termId      String
+  totalAmount Int
+  status      InvoiceStatus @default(ISSUED)
+  dueDate     DateTime
+  student     Student @relation(fields: [studentId], references: [id])
+  term        Term    @relation(fields: [termId], references: [id])
+  lineItems   InvoiceLineItem[]
+  payments    Payment[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model InvoiceLineItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  name      String
+  amount    Int
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+}
+
+model Payment {
+  id        String   @id @default(cuid())
+  invoiceId String
+  parentId  String
+  schoolId  String
+  method    PaymentMethod
+  provider  String
+  reference String
+  amount    Int
+  status    PaymentStatus @default(PENDING)
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  parent    User    @relation(fields: [parentId], references: [id])
+  school    School  @relation(fields: [schoolId], references: [id])
+  mobileTx  MobileMoneyTransaction?
+  createdAt DateTime @default(now())
+}
+
+model MobileMoneyTransaction {
+  id             String @id @default(cuid())
+  paymentId      String @unique
+  phoneNumber    String
+  network        String
+  rawPayload     Json?
+  callbackStatus String
+  payment        Payment @relation(fields: [paymentId], references: [id])
+}
