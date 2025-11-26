@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 export default function SchoolStudents() {
   return (
     <div className="space-y-3">
