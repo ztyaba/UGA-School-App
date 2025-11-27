@@ -1,0 +1,1 @@
+export const schools = [{'id': 's1', 'name': 'Kampala Parents School', 'district': 'Kampala'}, {'id': 's2', 'name': 'Greenhill Academy', 'district': 'Wakiso'}, {'id': 's3', 'name': 'Trinity College Nabbingo', 'district': 'Masaka'}];
