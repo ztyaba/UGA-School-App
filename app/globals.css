@@ -2,6 +2,151 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --bg-dark: #0d0d0f;
+  --text-primary: #ffffff;
+  --text-secondary: #d1d5db;
+  --card-border: rgba(255, 255, 255, 0.08);
+}
+
 body {
-  @apply bg-slate-50 text-slate-900;
+  background: var(--bg-dark);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, #000000, #ffd700, #d70000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.glass-panel {
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(25px);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+}
+
+.hover-lift {
+  transition: 0.25s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 40px rgba(255, 255, 255, 0.12);
+}
+
+.neon-orb {
+  position: absolute;
+  width: 900px;
+  height: 900px;
+  filter: blur(120px);
+  opacity: 0.45;
+  animation: float 14s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+.neon-orb.yellow {
+  background: radial-gradient(circle, rgba(255, 215, 0, 0.6), rgba(13, 13, 15, 0));
+  top: -200px;
+  left: -150px;
+}
+
+.neon-orb.red {
+  background: radial-gradient(circle, rgba(215, 0, 0, 0.6), rgba(13, 13, 15, 0));
+  bottom: -220px;
+  right: -120px;
+}
+
+.neon-orb.white {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25), rgba(13, 13, 15, 0));
+  top: 20%;
+  right: 10%;
+}
+
+@keyframes float {
+  from {
+    transform: translateY(-10px);
+  }
+  to {
+    transform: translateY(20px);
+  }
+}
+
+@keyframes barGrow {
+  from {
+    height: 10%;
+  }
+  to {
+    height: 80%;
+  }
+}
+
+@keyframes glowLine {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+
+.table-grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table-grid th,
+.table-grid td {
+  padding: 12px 14px;
+  text-align: left;
+  border-bottom: 1px solid var(--card-border);
+  color: var(--text-secondary);
+}
+
+.table-grid th {
+  color: var(--text-primary);
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+}
+
+.main-shell {
+  position: relative;
+  overflow: hidden;
+  min-height: 100vh;
+}
+
+.nav-link {
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover {
+  color: var(--text-primary);
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+}
+
+.card-title {
+  font-weight: 700;
 }
