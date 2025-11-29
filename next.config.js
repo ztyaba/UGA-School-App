@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    typedRoutes: true,
+    // Keep typed routes disabled to support string-based hrefs throughout the app
+    typedRoutes: false,
   },
   output: "standalone",
 };
